@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Basketball - Final Version</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #0a0a0a; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; }
+        canvas { background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); display: block; }
+        .ui-overlay { position: absolute; top: 20px; display: flex; gap: 20px; pointer-events: none; }
+        .stat-box { background: rgba(20, 20, 20, 0.85); padding: 10px 25px; border-radius: 10px; border: 1px solid #444; text-align: center; }
+        .label { font-size: 12px; color: #aaa; text-transform: uppercase; }
+        .value { font-size: 28px; font-weight: bold; color: #00ff88; }
+        
+        .controls-container { position: absolute; bottom: 30px; background: rgba(20, 20, 20, 0.9); padding: 20px; border-radius: 20px; display: flex; gap: 30px; align-items: center; border: 1px solid #333; }
+        input[type=range] { width: 150px; accent-color: #ff4500; cursor: pointer; }
+        
+        #shootBtn { padding: 15px 45px; font-size: 22px; font-weight: 800; background: linear-gradient(#ff6a00, #ee0979); color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(238, 9, 121, 0.4); }
+        #shootBtn:disabled { background: #444; box-shadow: none; opacity: 0.5; }
+        
+        .exit-btn { background: #444; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .exit-btn:hover { background: #cc0000; }
+
+        .modal { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); padding: 50px; border-radius: 30px; text-align: center; border: 2px solid #ff4500; z-index: 100; }
+    </style>
+</head>
+<body>
+
+<div class="ui-overlay">
+    <div class="stat-box"><div class="label">Time Left</div><div id="timer" class="value">02:00</div></div>
+    <div class="stat-box"><div class="label">Score</div><div id="score" class="value" style="color: #ff9d00;">0</div></div>
+    <button class="exit-btn" style="pointer-events: auto; align-self: center;" onclick="location.href='index.html'">QUIT</button>
+</div>
+
+<div class="controls-container">
+    <div style="text-align:center"><div class="label">Angle: <span id="angleVal">65</span>°</div><input type="range" id="angle" min="10" max="85" value="65"></div>
+    <button id="shootBtn" onclick="shoot()">SHOOT!</button>
+    <div style="text-align:center"><div class="label">Power: <span id="powerVal">160</span></div><input type="range" id="power" min="50" max="250" value="160"></div>
+</div>
+
+<div id="gameOver" class="modal">
+    <h1 id="modalTitle">GAME OVER</h1>
+    <p>Final Score: <span id="finalScore" style="color: #00ff88;">0</span></p>
+    <button onclick="location.reload()" style="padding:10px 20px; cursor:pointer; background: orange; border:none; border-radius:5px; font-weight:bold; margin-right: 10px;">REPLAY</button>
+    <button onclick="exitApp()" style="padding:10px 20px; cursor:pointer; background: #444; color:white; border:none; border-radius:5px;">CLOSE</button>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let score = 0, timeLeft = 120, gameActive = true, gravity = 0.45;
+    let ball = { x: 200, y: canvas.height - 150, radius: 20, vx: 0, vy: 0, shooting: false, waitingForReset: false };
+    let hoop = { x: canvas.width - 350, y: canvas.height / 2, width: 85 };
+    let backboard = { x: 0, y: 0, w: 15, h: 180 }; 
+
+    function updateHoopPos() {
+        backboard.x = hoop.x + hoop.width;
+        backboard.y = hoop.y - 130;
+    }
+
+    document.getElementById('angle').oninput = (e) => document.getElementById('angleVal').innerText = e.target.value;
+    document.getElementById('power').oninput = (e) => document.getElementById('powerVal').innerText = e.target.value;
+
+    function drawBasketball(x, y) {
+        let grad = ctx.createRadialGradient(x-5, y-5, 2, x, y, ball.radius);
+        grad.addColorStop(0, "#ff9d00"); grad.addColorStop(1, "#9c3d00");
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(x, y, ball.radius, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = "rgba(0,0,0,0.6)"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(x-ball.radius, y); ctx.lineTo(x+ball.radius, y);
+        ctx.moveTo(x, y-ball.radius); ctx.lineTo(x, y+ball.radius); ctx.stroke();
+    }
+
+    function drawHoop() {
+        ctx.fillStyle = "#222";
+        ctx.fillRect(backboard.x + 30, backboard.y + 50, 20, canvas.height); 
+        ctx.fillStyle = "white";
+        ctx.fillRect(backboard.x, backboard.y, backboard.w, backboard.h);
+        ctx.strokeStyle = "#cc0000"; ctx.lineWidth = 3;
+        ctx.strokeRect(backboard.x, hoop.y - 40, backboard.w, 50);
+
+        ctx.strokeStyle = "rgba(255,255,255,0.4)";
+        for(let i=0; i<=5; i++){
+            ctx.beginPath(); ctx.moveTo(hoop.x + (i*17), hoop.y+10);
+            ctx.lineTo(hoop.x+10+(i*12), hoop.y+60); ctx.stroke();
+        }
+
+        ctx.fillStyle = "#ff4500";
+        ctx.beginPath(); ctx.roundRect(hoop.x, hoop.y, hoop.width, 12, 5); ctx.fill();
+    }
+
+    function update() {
+        if (!gameActive) return;
+        if (ball.shooting) {
+            ball.x += ball.vx; ball.y += ball.vy; ball.vy += gravity;
+
+            if (ball.x + ball.radius > backboard.x && ball.x - ball.radius < backboard.x + backboard.w &&
+                ball.y > backboard.y && ball.y < backboard.y + backboard.h) {
+                ball.vx *= -0.5; ball.x = backboard.x - ball.radius;
+            }
+
+            let distToRimEdge = Math.hypot(ball.x - hoop.x, ball.y - hoop.y);
+            if (distToRimEdge < ball.radius + 5) {
+                ball.vy *= -0.4; ball.vx *= -0.7; ball.y = hoop.y - ball.radius - 5;
+            }
+
+            if (!ball.waitingForReset && ball.vy > 0 && 
+                ball.x > hoop.x + 10 && ball.x < hoop.x + hoop.width - 10 && 
+                Math.abs(ball.y - (hoop.y + 20)) < 15) {
+                score++;
+                document.getElementById('score').innerText = score;
+                ball.waitingForReset = true;
+                setTimeout(() => { moveHoop(); resetBall(); }, 1000);
+            }
+
+            if (!ball.waitingForReset && (ball.y > canvas.height + 100 || ball.x > canvas.width + 100 || ball.x < -100)) {
+                resetBall();
+            }
+        }
+    }
+
+    function shoot() {
+        if (ball.shooting || ball.waitingForReset || !gameActive) return;
+        let rad = document.getElementById('angle').value * (Math.PI / 180);
+        let p = document.getElementById('power').value;
+        ball.vx = Math.cos(rad) * (p / 6.5);
+        ball.vy = -Math.sin(rad) * (p / 6.5);
+        ball.shooting = true;
+        document.getElementById('shootBtn').disabled = true;
+    }
+
+    function resetBall() {
+        ball.shooting = false; ball.waitingForReset = false;
+        ball.x = 200; ball.y = canvas.height - 150;
+        ball.vx = 0; ball.vy = 0;
+        document.getElementById('shootBtn').disabled = false;
+    }
+
+    function moveHoop() {
+        hoop.x = Math.random() * (canvas.width - 600) + 400;
+        hoop.y = Math.random() * (canvas.height - 500) + 200;
+        updateHoopPos();
+    }
+
+    function quitGame() {
+        gameActive = false;
+        clearInterval(timerInt);
+        document.getElementById('modalTitle').innerText = "GAME EXITED";
+        document.getElementById('finalScore').innerText = score;
+        document.getElementById('gameOver').style.display = 'block';
+    }
+
+    function exitApp() {
+        // Redirects to a blank page to "exit" the game
+        window.location.href = "about:blank";
+    }
+
+    const timerInt = setInterval(() => {
+        if (--timeLeft <= 0) {
+            quitGame();
+            document.getElementById('modalTitle').innerText = "TIME'S UP!";
+        }
+        let m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+        let s = (timeLeft%60).toString().padStart(2,'0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+    }, 1000);
+
+    function main() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#333"; ctx.fillRect(0, canvas.height-20, canvas.width, 20); 
+        drawHoop(); drawBasketball(ball.x, ball.y); update();
+        requestAnimationFrame(main);
+    }
+    
+    updateHoopPos();
+    main();
+</script>
+</body>
+</html>

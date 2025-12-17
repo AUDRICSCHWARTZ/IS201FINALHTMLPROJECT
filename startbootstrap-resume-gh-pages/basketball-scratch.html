@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Basketball (Scratch) - Audric Schwartz</title>
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/scratch-style.css" rel="stylesheet" />
+  </head>
+  <body class="scratch-page">
+    <div class="scratch-container">
+      <p style="text-align:right;margin-top:8px;"><a class="back-link" href="index.html">← Back to Home</a></p>
+      <header class="scratch-hero">
+        <h1>Who is the GOAT?</h1>
+        <p class="lead">Side-by-side comparison of career statistics and accomplishments for Michael Jordan and LeBron James. Data shown below is a concise comparison — I can fetch and cite up-to-date, sourced numbers if you want.</p>
+        <p>
+          <a href="#michael-stats">Michael Jordan Stats</a> ·
+          <a href="#lebron-stats">LeBron James Stats</a> ·
+          <a href="#tableau-chart">Tableau chart</a>
+        </p>
+      </header>
+
+      <!-- Comparison notes moved here so they appear before the stats -->
+      <!-- Nested list example (unordered list inside ordered list) -->
+      <section id="lists-example">
+        <h2>Comparison Notes</h2>
+        <ol>
+          <li>Key categories
+            <ul>
+              <li>Championships</li>
+              <li>MVPs</li>
+              <li>Finals MVPs</li>
+            </ul>
+          </li>
+          <li>Per-game stats
+            <ul>
+              <li>Points</li>
+              <li>Rebounds</li>
+              <li>Assists</li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+
+      <div class="compare-row">
+        <div id="michael-stats" class="player-card">
+          <img class="player-photo face-top" src="assets/img/Michael.jpg" alt="Michael Jordan photo" />
+          <div class="name">Michael Jordan</div>
+          <div class="meta">Position: Guard · Career: 1984–1993, 1995–1998, 2001–2003</div>
+          <ul class="stat-list">
+            <li><span class="stat-label">Championships</span><span class="stat-value">6</span></li>
+            <li><span class="stat-label">Regular-season MVPs</span><span class="stat-value">5</span></li>
+            <li><span class="stat-label">Finals MVPs</span><span class="stat-value">6</span></li>
+            <li><span class="stat-label">Career PPG (regular season)</span><span class="stat-value">30.12</span></li>
+            <li><span class="stat-label">Rebounds per game</span><span class="stat-value">6.2</span></li>
+            <li><span class="stat-label">Assists per game</span><span class="stat-value">5.3</span></li>
+            <li><span class="stat-label">FG%</span><span class="stat-value">49.7%</span></li>
+            <li><span class="stat-label">FT%</span><span class="stat-value">83.5%</span></li>
+          </ul>
+          <div class="video-wrap">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/pA5-UYpp6NA?si=_xP6gmqyQWr5F7sw&amp;start=2" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;"> <span class="vs-badge">VS</span> </div>
+
+        <div id="lebron-stats" class="player-card">
+          <img class="player-photo" src="assets/img/Lebron.jpg" alt="LeBron James photo" />
+          <div class="name">LeBron James</div>
+          <div class="meta">Position: Forward · Career: 2003–present</div>
+          <ul class="stat-list">
+            <li><span class="stat-label">Championships</span><span class="stat-value">4</span></li>
+            <li><span class="stat-label">Regular-season MVPs</span><span class="stat-value">4</span></li>
+            <li><span class="stat-label">Finals MVPs</span><span class="stat-value">4</span></li>
+            <li><span class="stat-label">Career PPG (regular season)</span><span class="stat-value">~27.2</span></li>
+            <li><span class="stat-label">Rebounds per game</span><span class="stat-value">~7.5</span></li>
+            <li><span class="stat-label">Assists per game</span><span class="stat-value">~7.3</span></li>
+            <li><span class="stat-label">FG%</span><span class="stat-value">~50.4%</span></li>
+            <li><span class="stat-label">FT%</span><span class="stat-value">~73.5%</span></li>
+          </ul>
+          <div class="video-wrap">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/CoP80borgLI?si=sZUPk2lBl-qx1ymM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <p><strong>Notes:</strong> Numbers shown are career-level summaries intended for quick comparison. I can fetch and cite exact, up-to-date career totals (points, rebounds, assists, per-game values and advanced metrics) from trusted sources such as Basketball-Reference — would you like me to pull the latest sourced stats and update the page?</p>
+      </div>
+
+      
+      
+      <!-- Tableau chart embedded visualization -->
+      <section id="tableau-chart">
+        <h2>Tableau chart</h2>
+        <div class='tableauPlaceholder' id='viz1765998560307' style='position: relative'>
+          <noscript>
+            <a href='#'>
+              <img alt='Lebron vs. Jordan Regular Season ' src='https://public.tableau.com/static/images/Le/Lebronvs_MJ/Lebronvs_JordanRegularSeason/1_rss.png' style='border: none' />
+            </a>
+          </noscript>
+          <object class='tableauViz' style='display:none;'>
+            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+            <param name='embed_code_version' value='3' />
+            <param name='site_root' value='' />
+            <param name='name' value='Lebronvs_MJ/Lebronvs_JordanRegularSeason' />
+            <param name='tabs' value='no' />
+            <param name='toolbar' value='yes' />
+            <param name='static_image' value='https://public.tableau.com/static/images/Le/Lebronvs_MJ/Lebronvs_JordanRegularSeason/1.png' />
+            <param name='animate_transition' value='yes' />
+            <param name='display_static_image' value='yes' />
+            <param name='display_spinner' value='yes' />
+            <param name='display_overlay' value='yes' />
+            <param name='display_count' value='yes' />
+          </object>
+        </div>
+        <script type='text/javascript'>
+          (function(){
+            var divElement = document.getElementById('viz1765998560307');
+            if(!divElement) return;
+            var vizElement = divElement.getElementsByTagName('object')[0];
+            if(!vizElement) return;
+            // Use a slightly taller aspect ratio and enforce a minimum height so content isn't cut off
+            function sizeViz(){
+              var computed = Math.round(divElement.offsetWidth * 0.9);
+              var minH = 700; // pixels
+              var targetHeight = Math.max(computed, minH);
+              vizElement.style.width = '100%';
+              vizElement.style.height = targetHeight + 'px';
+            }
+            // Initial sizing
+            sizeViz();
+            // Resize handler to keep viz height adequate on window changes
+            window.addEventListener('resize', function(){
+              // throttle using requestAnimationFrame for smoother updates
+              if(window._tableauResizeRaf) cancelAnimationFrame(window._tableauResizeRaf);
+              window._tableauResizeRaf = requestAnimationFrame(sizeViz);
+            });
+            var scriptElement = document.createElement('script');
+            scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+            vizElement.parentNode.insertBefore(scriptElement, vizElement);
+          })();
+        </script>
+      </section>
+
+      <a class="back-link" href="index.html">← Back to Home</a>
+    </div>
+  </body>
+</html>
